@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Random;
+import java.util.Scanner;
 
 public class ClosestPairs {
 
@@ -18,19 +19,20 @@ public class ClosestPairs {
 
     public int bruteForceMinDist() {
         int minDist = Integer.MAX_VALUE;
-        int[] point1 = { 0, 0 };
-        int[] point2 = { 0, 0 };
+        // int[] point1 = { 0, 0 };
+        // int[] point2 = { 0, 0 };
 
         for (int i = 0; i < points.length; ++i) {
             for (int j = i + 1; j < points.length; ++j) {
                 if (distSQ(points[i], points[j]) < minDist) {
                     minDist = distSQ(points[i], points[j]);
-                    point1 = points[i];
-                    point2 = points[j];
+                    // point1 = points[i];
+                    // point2 = points[j];
                 }
             }
         }
-        System.out.println("Shortest Between:" + point1[0] + ", " + point1[1] + " and " + point2[0] + ", " + point2[1]);
+        // System.out.println("Shortest Between:" + point1[0] + ", " + point1[1]
+        // + " and " + point2[0] + ", " + point2[1]);
         return minDist;
     }
 
@@ -116,8 +118,8 @@ public class ClosestPairs {
     private int minOfNeighbors(ArrayList<int[]> insideCrossCut, int index) {
         int shortest = Integer.MAX_VALUE;
 
-        for (int i = index - 6; i <= index + 6; ++i)
-            if (i != index && i > 0 && i < insideCrossCut.size())
+        for (int i = index - 3; i <= index + 3; ++i)
+            if (i != index && i >= 0 && i < insideCrossCut.size())
                 if (distSQ(insideCrossCut.get(index), insideCrossCut.get(i)) < shortest)
                     shortest = distSQ(insideCrossCut.get(index), insideCrossCut.get(i));
 
@@ -175,19 +177,42 @@ public class ClosestPairs {
         System.out.println(testClosest.bruteForceMinDist());
         System.out.println(testClosest.minDistExtWithPrints());
 
-        testPoints = new int[20][2];
+        for (int testNum = 1; testNum < 20000; ++testNum) {
+            testPoints = new int[testNum][2];
 
-        Random rand = new Random();
-        for (int i = 0; i < testPoints.length; ++i)
-            testPoints[i] = new int[] { rand.nextInt(10000), rand.nextInt(10000) };
-        testClosest = new ClosestPairs(testPoints);
-        // for (int i = 0; i < testPoints.length; ++i) {
-        // System.out.println(testClosest.pointsXSorted[i][0] + ", " +
-        // testClosest.pointsXSorted[i][1] + "\t"
-        // + testClosest.pointsYSorted[i][0] + "," +
-        // testClosest.pointsYSorted[i][1]);
-        // }
-        System.out.println(testClosest.bruteForceMinDist());
-        System.out.println(testClosest.minDistExt());
+            Random rand = new Random();
+            for (int i = 0; i < testPoints.length; ++i)
+                testPoints[i] = new int[] { rand.nextInt(10000), rand.nextInt(10000) };
+            testClosest = new ClosestPairs(testPoints);
+            // for (int i = 0; i < testPoints.length; ++i) {
+            // System.out.println(testClosest.pointsXSorted[i][0] + ", " +
+            // testClosest.pointsXSorted[i][1] + "\t"
+            // + testClosest.pointsYSorted[i][0] + "," +
+            // testClosest.pointsYSorted[i][1]);
+            // }
+
+            long startTime = System.nanoTime();
+            long elapsed = 0;
+            int bruteDist = testClosest.bruteForceMinDist();
+            elapsed = System.nanoTime() - startTime;
+            System.out.print(elapsed + "\t");
+
+            startTime = System.nanoTime();
+            int custDist = testClosest.minDistExt();
+            elapsed = System.nanoTime() - startTime;
+            System.out.println(elapsed);
+
+            if (bruteDist != custDist) {
+                System.out.println("Bad Value");
+                for (int i = 0; i < testPoints.length; ++i) {
+                    System.out.println(testClosest.pointsXSorted[i][0] + ", " + testClosest.pointsXSorted[i][1] + "\t"
+                            + testClosest.pointsYSorted[i][0] + "," + testClosest.pointsYSorted[i][1]);
+                }
+                Scanner scanner = new Scanner(System.in);
+                scanner.nextLine();
+                scanner.close();
+            }
+
+        }
     }
 }
